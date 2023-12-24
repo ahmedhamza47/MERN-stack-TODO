@@ -26,15 +26,13 @@ const TODODB = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleFormSubmit = async (values: any, resetForm: any) => {
-    // e.preventDefault();
     const reqData = {
       id: id || null,
       todo: values.todo,
     };
 
     const result = await axios.post("http://localhost:3000/save", reqData);
-    // console.log(result);
-    // setTodo([...todo, inputData]);
+
     if (result) {
       handleFetch();
       setId(null);
@@ -79,24 +77,6 @@ const TODODB = () => {
     }
   };
 
-  // const handleCompleted = async (id: any) => {
-  //   try {
-  //     const res = await axios.get(`http://localhost:3000/completed`, {
-  //       params: {
-  //         id: id,
-  //       },
-  //     });
-  //     if (res) {
-  //       // handleFetch();
-  //       setId(null);
-  //       setTodo(res?.data?.data);
-  //       // setIsCompleted(!isCompleted);
-  //       toast.error(res.data?.message);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   return (
     <div className="flex justify-center w-full h-screen items-center">
       <div className="flex flex-col items-center w-1/3 min-h-[20rem] bg-[#776B5D] border-2 rounded-xl border-[#EBE3D5] shadow-2xl">

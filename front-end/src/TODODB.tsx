@@ -12,6 +12,8 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import { toast } from "react-toastify";
 import { TiTick } from "react-icons/ti";
+import { getToken } from "./getToken";
+import { apiRequest } from "./ApiRequest/apiRequest";
 
 const todoSchema = Yup.object().shape({
   todo: Yup.string().required("Todo is required").trim(),
@@ -20,7 +22,8 @@ const todoSchema = Yup.object().shape({
 const initialValues = {
   todo: "",
 };
-const TODODB = () => {
+console.log(getToken(), "getToken()");
+const TodoApp = () => {
   const [todo, setTodo] = useState<any>(null);
   const [id, setId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,13 +34,14 @@ const TODODB = () => {
       todo: values.todo,
     };
 
-    const result = await axios.post("http://localhost:3000/save", reqData);
+    // const result = await axios.post("http://localhost:3000/save", reqData);
+    const result = await apiRequest("/save", "post", reqData);
 
     if (result) {
       handleFetch();
       setId(null);
       resetForm();
-      toast.success(result.data?.message);
+      // toast.success(result?.message);
     }
   };
 
@@ -47,12 +51,19 @@ const TODODB = () => {
       let res;
       if (id) {
         res = await axios.get(`http://localhost:3000/getTodo`, {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
           params: {
             id: id,
           },
         });
       } else {
-        res = await axios.get("http://localhost:3000/getTodo");
+        res = await axios.get("http://localhost:3000/getTodo", {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        });
       }
       res?.data && setIsLoading(false);
       setTodo(res.data?.data);
@@ -60,8 +71,13 @@ const TODODB = () => {
       console.log(error);
     }
   };
+  const getUser = async () => {
+    const data = apiRequest("/init", "get");
+    console.log(data, "data");
+  };
   useEffect(() => {
     handleFetch();
+    getUser();
   }, []);
 
   const handleDelete = async (id: any) => {
@@ -206,4 +222,4 @@ const TODODB = () => {
   );
 };
 
-export default TODODB;
+export default TodoApp;
